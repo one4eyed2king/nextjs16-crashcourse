@@ -144,11 +144,11 @@ function generateSlug(title: string): string {
 
 // Helper function to normalize date to ISO format
 function normalizeDate(dateString: string): string {
-    const date = new Date(dateString);
-    if (isNaN(date.getTime())) {
-        throw new Error('Invalid date format');
+    const date = parseISO(dateString);
+    if (!isValid(date)) {
+        throw new Error('Invalid date format. Expected ISO format (YYYY-MM-DD)');
     }
-    return date.toISOString().split('T')[0]; // Return YYYY-MM-DD format
+    return format(date, 'yyyy-MM-dd'); // Return YYYY-MM-DD format
 }
 
 // Helper function to normalize time format
@@ -177,9 +177,6 @@ function normalizeTime(timeString: string): string {
 
     return `${hours.toString().padStart(2, '0')}:${minutes}`;
 }
-
-// Create unique index on slug for better performance
-EventSchema.index({slug: 1}, {unique: true});
 
 // Create compound index for common queries
 EventSchema.index({date: 1, mode: 1});
