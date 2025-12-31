@@ -16,9 +16,19 @@ declare global {
 const MONGODB_URI = process.env.MONGODB_URI;
 
 //Validate MONGODB_URI exists
-if (!MONGODB_URI) {
-    throw new Error("MONGODB_URI is not defined.");
-}
+const MONGODB_URI = process.env.MONGODB_URI;
+
+// ... rest of module ...
+
+async function connectDB(): Promise<typeof mongoose> {
+    if (!MONGODB_URI) {
+        throw new Error("MONGODB_URI is not defined.");
+    }
+
+    // Return existing connection if available
+    if (cached.conn) {
+        return cached.conn;
+    }
 
 // Initialize the cache on the global object to persist across hot reloads in development
 let cached: MongooseCache = global.mongoose || {conn: null, promise: null};
